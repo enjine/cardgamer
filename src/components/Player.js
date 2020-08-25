@@ -7,11 +7,6 @@ const Player = (props) => {
   const handModel = {
     cards: hand,
   };
-
-  const victoriesModel = {
-    cards: victories,
-  };
-
   return (
     <div className="player" key={`player-${number}`}>
       <h1>{`${name}`}</h1>
@@ -27,15 +22,7 @@ const Player = (props) => {
           }
         </aside>
         <aside className="victories">
-          <h3>VICTORIES</h3>
-          {
-            <Deck
-              model={victoriesModel}
-              imagePath={`/images/cards/standard`}
-              stacked={false}
-              isFaceDown={false}
-            />
-          }
+          <h3>{victories || "0"} VICTORIES</h3>
         </aside>
       </div>
     </div>

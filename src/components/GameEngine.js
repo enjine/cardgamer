@@ -15,7 +15,7 @@ class GameEngine extends Component {
     e.persist();
     const { games } = this.props;
     const numPlayers = prompt("How many players?");
-    if (isNaN(numPlayers)) {
+    if (isNaN(numPlayers) || !numPlayers) {
       alert("Please enter a number!");
       this.onChange(e);
     } else {

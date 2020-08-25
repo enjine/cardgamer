@@ -34,9 +34,12 @@ export default class Game extends Component {
     const players = [];
     let i = 1;
     do {
-      players.push(
-        this.playerFactory(i, prompt(`What is player ${i}'s name?`))
-      );
+      const name = prompt(`What is player ${i}'s name?`);
+      if (!name) {
+        alert(`Please enter a name for Player ${i}`);
+        return this.generatePlayers(numPlayers);
+      }
+      players.push(this.playerFactory(i, name));
       i++;
     } while (i <= numPlayers);
     return players;
