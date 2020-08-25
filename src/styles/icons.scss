@@ -1,0 +1,11 @@
+@import "./colors";
+
+.CLUBS,
+.SPADES {
+  color: $black;
+}
+
+.HEARTS,
+.DIAMONDS {
+  color: $red;
+}
