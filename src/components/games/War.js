@@ -26,6 +26,7 @@ export default class War extends Game {
     this.autoPlay = this.autoPlay.bind(this);
     this.resumePlay = this.resumePlay.bind(this);
     this.changeLayout = this.changeLayout.bind(this);
+    this.checkWinner = this.checkWinner.bind(this);
   }
 
   componentDidMount() {
@@ -103,7 +104,7 @@ export default class War extends Game {
     if (!isDealt) {
       this.deal();
     }
-    const autoPlayId = setInterval(this.playHand, 250);
+    const autoPlayId = setInterval(this.playHand, 3);
     this.setState({ autoPlayId });
   }
 
@@ -115,62 +116,76 @@ export default class War extends Game {
 
   playHand() {
     const { deckSize } = this.props.rules;
-    const { players, battles, autoPlayId } = this.state;
-
-    if (this.state.winner && autoPlayId) {
-      clearInterval(autoPlayId);
-    }
+    const { players, battles } = this.state;
 
     const player1Hand = players[0].hand;
     const player2Hand = players[1].hand;
 
-    //take the top card from each hand
-    const [p1Card] = player1Hand.splice(-1, 1);
-    const [p2Card] = player2Hand.splice(-1, 1);
-    console.log("got cards", p1Card, p2Card, players);
-    //compare the ranks
-    if (p1Card && p2Card) {
+    if (player1Hand.length && player2Hand.length) {
+      const [p1Card] = player1Hand.splice(-1, 1);
+      const [p2Card] = player2Hand.splice(-1, 1);
+
       if (p1Card.model.front.rank > p2Card.model.front.rank) {
         players[0].victories += battles.length + 2;
         player1Hand.push(p1Card, p2Card, ...battles);
-        players[0].hand = player1Hand;
+        console.info("P1 WINS!");
       } else if (p1Card.model.front.rank === p2Card.model.front.rank) {
         players[0].hand = player1Hand;
         players[1].hand = player2Hand;
         battles.push(p1Card, p2Card);
+        console.info("WAR!");
         return this.setState({
           isWar: true,
           players,
           battles,
+          ...this.checkWinner(players[0], players[1], deckSize),
         });
       } else {
         players[1].victories += battles.length + 2;
         player2Hand.push(p1Card, p2Card, ...battles);
-        players[1].hand = player2Hand;
+        console.info("P2 WINS!");
       }
     } else {
-      console.error("WHY NO CARDS?", players);
+      // One of the players has no cards left to fight the war!
+      // The spoils go to the player with more than zero cards
+      if (player1Hand.length === 0) {
+        players[1].victories += battles.length;
+        player2Hand.push(...battles);
+        console.info("P2 WINS!");
+      } else if (player2Hand.length === 0) {
+        players[0].victories += battles.length;
+        player1Hand.push(...battles);
+        console.info("P1 WINS!");
+      }
     }
 
-    console.log(players, players[0].hand.length, players[1].hand.length);
+    players[0].hand = player1Hand;
+    players[1].hand = player2Hand;
 
-    let winner = null;
-    if (players[0].hand.length === deckSize) {
-      winner = players[0];
-    } else if (players[1].hand.length === deckSize) {
-      winner = players[1];
-    }
-
-    if (winner) {
-      clearInterval(autoPlayId);
-    }
+    console.warn(
+      `Player 1: ${player1Hand.length} Player 2: ${player2Hand.length}`
+    );
 
     this.setState({
       isWar: false,
       players,
       battles: [],
-      winner,
+      ...this.checkWinner(players[0], players[1], deckSize),
     });
+  }
+
+  checkWinner(player1, player2, deckSize) {
+    const { autoPlayId } = this.state;
+    let winner = this.state.winner;
+    if (player1.hand.length === deckSize) {
+      winner = player1;
+    } else if (player2.hand.length === deckSize) {
+      winner = player2;
+    }
+    if (winner) {
+      clearInterval(autoPlayId);
+    }
+    return { winner, autoPlayId: winner ? null : autoPlayId };
   }
 
   changeLayout() {
@@ -195,8 +210,30 @@ export default class War extends Game {
 
     return (
       <div className={`game ${this.constructor.name}`}>
-        <h1>{`It's a game of ${this.constructor.name} for ${numPlayers} players!`}</h1>
+        <h1>{`It's a game of ${this.constructor.name} for ${numPlayers} player${
+          numPlayers > 1 ? "s" : ""
+        }!`}</h1>
         {winner && <h1>{winner.name.toUpperCase()} IS THE VICTOR!</h1>}
+        <fieldset>
+          <legend>Dealer</legend>
+          <button onClick={reset}>RESET</button>
+          {!isDealt && <button onClick={this.shuffle}>SHUFFLE</button>}
+          {!isDealt && <button onClick={this.deal}>DEAL</button>}
+          {!autoPlayId && <button onClick={this.autoPlay}>AUTO-PLAY</button>}
+          {!isDealt && (
+            <button onClick={this.changeLayout}>
+              {isStacked ? "UNSTACK" : "STACK"}
+            </button>
+          )}
+        </fieldset>
+        {
+          <Deck
+            model={model}
+            imagePath={`/images/cards/standard`}
+            stacked={isStacked}
+            isFaceDown={isFaceDown}
+          />
+        }
         <fieldset>
           <legend>Players</legend>
           {isDealt && !winner && !autoPlayId && (
@@ -220,7 +257,11 @@ export default class War extends Game {
           </div>
           {isWar && (
             <div>
-              <h1 style={{ color: "red", fontSize: "5rem" }}>IT'S WAR!!</h1>
+              <h1
+                style={{ color: "red", fontSize: "5rem", lineHeight: ".5rem" }}
+              >
+                IT'S WAR!!
+              </h1>
               <Deck
                 model={{ cards: battles }}
                 imagePath={`/images/cards/standard`}
@@ -230,24 +271,6 @@ export default class War extends Game {
             </div>
           )}
         </fieldset>
-        <fieldset>
-          <legend>Dealer</legend>
-          <button onClick={reset}>RESET</button>
-          <button onClick={this.shuffle}>SHUFFLE</button>
-          <button onClick={this.deal}>DEAL</button>
-          <button onClick={this.autoPlay}>AUTO-PLAY</button>
-          <button onClick={this.changeLayout}>
-            {isStacked ? "UNSTACK" : "STACK"}
-          </button>
-        </fieldset>
-        {
-          <Deck
-            model={model}
-            imagePath={`/images/cards/standard`}
-            stacked={isStacked}
-            isFaceDown={isFaceDown}
-          />
-        }
       </div>
     );
   }
