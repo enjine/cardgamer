@@ -213,7 +213,11 @@ export default class War extends Game {
         <h1>{`It's a game of ${this.constructor.name} for ${numPlayers} player${
           numPlayers > 1 ? "s" : ""
         }!`}</h1>
-        {winner && <h1>{winner.name.toUpperCase()} IS THE VICTOR!</h1>}
+        {winner && (
+          <h1 style={{ color: "green", fontSize: "3rem", lineHeight: ".5rem" }}>
+            {winner.name.toUpperCase()} IS THE VICTOR!
+          </h1>
+        )}
         <fieldset>
           <legend>Dealer</legend>
           <button onClick={reset}>RESET</button>
@@ -258,7 +262,7 @@ export default class War extends Game {
           {isWar && (
             <div>
               <h1
-                style={{ color: "red", fontSize: "5rem", lineHeight: ".5rem" }}
+                style={{ color: "red", fontSize: "3rem", lineHeight: ".5rem" }}
               >
                 IT'S WAR!!
               </h1>

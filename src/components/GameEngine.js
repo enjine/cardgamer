@@ -33,14 +33,16 @@ class GameEngine extends Component {
     const { game, numPlayers } = this.state;
     return (
       (game && <Surface players={numPlayers}>{game}</Surface>) || (
-        <select onChange={this.onChange}>
-          <option key="null">Select a game to play</option>
-          {games.map((g, i) => (
-            <option value={i} key={`${g.prototype.constructor.name}`}>
-              {g.prototype.constructor.name}
-            </option>
-          ))}
-        </select>
+        <main>
+          <select onChange={this.onChange}>
+            <option key="null">Select a game to play</option>
+            {games.map((g, i) => (
+              <option value={i} key={`${g.prototype.constructor.name}`}>
+                {g.prototype.constructor.name}
+              </option>
+            ))}
+          </select>
+        </main>
       )
     );
   }

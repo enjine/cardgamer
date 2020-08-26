@@ -5,6 +5,17 @@ html {
   font-size: 1em;
 }
 
+main {
+  text-align: center;
+  select {
+    font-size: 2rem;
+    margin: 20px;
+  }
+  .board {
+    text-align: left;
+  }
+}
+
 .board {
   section {
     .players {
