@@ -1,3 +1,20 @@
+# Homework
+
+The purpose of this assignment is to figure a few things: your architecture and coding style, interpretation of requirements, and your creativity. We expect that this homework assignment will become a major conversation for our in-person interview.
+
+Please create a javascript class that represents a deck of cards. Please include any methods or properties on the class that you think might be applicable to using a deck of cards. Create the UI for one game that will use this deck of cards. This game can be any game you like, even a game that you created just for this assignment
+
+Requirements:
+
+- Create class that represents a deck of cards
+- Create an HTML/CSS UI for a game that interacts with this deck of cards class
+- Please make sure there is a valid package.json file in the root of the repo
+- Upload this homework to a github repository or a github gist
+
+Have fun!
+
+==================================================
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
