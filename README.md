@@ -17,7 +17,7 @@ Have fun!
 
 ## BUGS
 
-- face-up/face-down implementation should be represented on the model, not in component state and results in misrepresentation of a cards orientation and having to force re-renders.
+- face-up/face-down/flip implementation results in misrepresentation of a card's orientation and requires forced re-renders to work.
 
 ## TODO
 
@@ -36,6 +36,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `yarn`
+
+installs all dependencies.
 
 ### `yarn start`
 
