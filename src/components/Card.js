@@ -1,70 +1,51 @@
-import React, { Component } from "react";
+import React from "react";
 
-export default class Card extends Component {
-  state = {};
+export const Card = (props) => {
+  const { model, imagePath, testId, isFaceDown } = props;
+  const { id, code, key, rank, suit, entity, image } = model.front;
 
-  constructor(props) {
-    super(props);
-    const { isFaceDown } = props;
-
-    this.state = {
-      isFaceDown: Boolean(isFaceDown),
-      isDiscarded: false,
-    };
-
-    this.flip = this.flip.bind(this);
-  }
-
-  flip() {
+  const flip = () => {
     const {
       model: {
         front: { id, suit },
       },
       onFlip,
-    } = this.props;
+    } = props;
     onFlip(`${id}${suit}`);
-  }
+  };
 
-  discard() {
-    this.setState({
-      isDiscarded: true,
-    });
-  }
+  return (
+    <figure
+      className={`${id} ${suit}`}
+      onClick={flip}
+      entity={entity}
+      key={key}
+      code={code}
+      rank={rank}
+    >
+      {!isFaceDown ? (
+        <div className={`front`}>
+          <mark>
+            <img
+              data-testid={testId ? `${testId}` : "card-front"}
+              alt={`${id} OF ${suit}`}
+              src={`${imagePath}/${image}`}
+            />
+          </mark>
+        </div>
+      ) : (
+        <div className="back">
+          <mark>
+            <img
+              data-testid={testId ? `${testId}` : "card-back"}
+              alt={`BACK`}
+              src={`${imagePath}/${model.back.image}`}
+            />
+          </mark>
+        </div>
+      )}
+    </figure>
+  );
+};
 
-  render() {
-    const { model, imagePath, testId, isFaceDown } = this.props; // eslint-disable-next-line
-    const { id, code, key, rank, suit, glyphs, entity, image } = model.front;
-    return (
-      <figure
-        className={`${id} ${suit}`}
-        onClick={this.flip}
-        entity={entity}
-        key={key}
-        code={code}
-        rank={rank}
-      >
-        {!isFaceDown ? (
-          <div className={`front`}>
-            <mark>
-              <img
-                data-testid={testId ? `${testId}` : "card-front"}
-                alt={`${id} OF ${suit}`}
-                src={`${imagePath}/${image}`}
-              />
-            </mark>
-          </div>
-        ) : (
-          <div className="back">
-            <mark>
-              <img
-                data-testid={testId ? `${testId}` : "card-back"}
-                alt={`BACK`}
-                src={`${imagePath}/${model.back.image}`}
-              />
-            </mark>
-          </div>
-        )}
-      </figure>
-    );
-  }
-}
+export default Card;

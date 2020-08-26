@@ -1,32 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Card from "./Card";
 
 export default (props) => {
-  const { stacked, isFaceDown } = props;
+  const {
+    stacked,
+    isFaceDown,
+    model: { cards },
+  } = props;
   const [faceDown, setFaceDown] = useState(new Set()); //eslint-disable-next-line
-  const [forceUpdate, setForceUpdate] = useState(0);
+  const [forceUpdate, setForceUpdate] = useState();
+
+  const flip = useCallback(
+    (rank) => {
+      const isFlipped = faceDown.has(rank);
+      isFlipped ? faceDown.delete(rank) : faceDown.add(rank);
+      setFaceDown(faceDown);
+      setForceUpdate(new Date());
+    },
+    [faceDown]
+  );
+
+  const checkOrientation = ({ id, suit }) => {
+    return faceDown.has(`${id}${suit}`);
+  };
 
   useEffect(() => {
     if (isFaceDown) {
-      props.model.cards.forEach((c) => {
-        const { id, suit } = c.model.front;
-        faceDown.add(`${id}${suit}`);
-      });
-      setFaceDown(faceDown);
+      cards.forEach(
+        ({
+          model: {
+            front: { id, suit },
+          },
+        }) => {
+          flip(`${id}${suit}`);
+        }
+      );
     }
-  }, [isFaceDown, props.model.cards, faceDown]);
-
-  const flip = (rank) => {
-    const isFlipped = faceDown.has(rank);
-    isFlipped ? faceDown.delete(rank) : faceDown.add(rank);
-    setFaceDown(faceDown);
-    setForceUpdate(new Date());
-  };
-
-  const checkOrientation = (card) => {
-    const { id, suit } = card;
-    return faceDown.has(`${id}${suit}`);
-  };
+  }, [cards, flip, isFaceDown, faceDown]);
 
   return (
     <div className={`deck-container ${stacked ? "stacked" : ""}`}>

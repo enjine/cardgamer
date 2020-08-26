@@ -28,6 +28,20 @@ main {
       h1 {
         text-align: center;
       }
+      h2 {
+        text-align: center;
+        &.war {
+          color: $red;
+          font-size: 3rem;
+          line-height: 0.5rem;
+        }
+        &.victor {
+          color: $green;
+          font-size: 3rem;
+          line-height: 0.5rem;
+        }
+      }
+
       fieldset {
         text-align: center;
         button {

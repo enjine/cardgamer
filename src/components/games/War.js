@@ -114,26 +114,32 @@ export default class War extends Game {
     this.setState({ autoPlayId: null });
   }
 
+  canPlayHand(p1Hand, p2Hand, numCards) {
+    return p1Hand.length >= numCards && p2Hand.length >= numCards;
+  }
+
   playHand() {
     const { deckSize } = this.props.rules;
-    const { players, battles } = this.state;
+    const { players, battles, isWar } = this.state;
+
+    const numCardsToPlay = isWar ? 4 : 1;
 
     const player1Hand = players[0].hand;
     const player2Hand = players[1].hand;
 
-    if (player1Hand.length && player2Hand.length) {
-      const [p1Card] = player1Hand.splice(-1, 1);
-      const [p2Card] = player2Hand.splice(-1, 1);
+    if (this.canPlayHand(player1Hand, player2Hand, numCardsToPlay)) {
+      const p1Card = player1Hand.splice(-1, numCardsToPlay).pop();
+      const p2Card = player2Hand.splice(-1, numCardsToPlay).pop();
 
       if (p1Card.model.front.rank > p2Card.model.front.rank) {
         players[0].victories += battles.length + 2;
         player1Hand.push(p1Card, p2Card, ...battles);
-        console.info("P1 WINS!");
+        console.info(`P1 WINS${isWar ? " THE BATTLE" : " THE HAND"}!`);
       } else if (p1Card.model.front.rank === p2Card.model.front.rank) {
         players[0].hand = player1Hand;
         players[1].hand = player2Hand;
         battles.push(p1Card, p2Card);
-        console.info("WAR!");
+        console.info("IT'S WAR!");
         return this.setState({
           isWar: true,
           players,
@@ -143,19 +149,19 @@ export default class War extends Game {
       } else {
         players[1].victories += battles.length + 2;
         player2Hand.push(p1Card, p2Card, ...battles);
-        console.info("P2 WINS!");
+        console.info(`P2 WINS${isWar ? " THE BATTLE" : " THE HAND"}!`);
       }
     } else {
-      // One of the players has no cards left to fight the war!
-      // The spoils go to the player with more than zero cards
-      if (player1Hand.length === 0) {
+      // One of the players does not have enough cards left to play the hand
+      // The spoils shall go to the player who has enough cards to play the hand
+      if (player1Hand.length <= numCardsToPlay) {
         players[1].victories += battles.length;
         player2Hand.push(...battles);
-        console.info("P2 WINS!");
-      } else if (player2Hand.length === 0) {
+        console.info(`P2 WINS${isWar ? " THE BATTLE" : " THE HAND"}!`);
+      } else if (player2Hand.length <= numCardsToPlay) {
         players[0].victories += battles.length;
         player1Hand.push(...battles);
-        console.info("P1 WINS!");
+        console.info(`P1 WINS${isWar ? " THE BATTLE" : " THE HAND"}!`);
       }
     }
 
@@ -214,9 +220,9 @@ export default class War extends Game {
           numPlayers > 1 ? "s" : ""
         }!`}</h1>
         {winner && (
-          <h1 style={{ color: "green", fontSize: "3rem", lineHeight: ".5rem" }}>
+          <h2 className={`victor`}>
             {winner.name.toUpperCase()} IS THE VICTOR!
-          </h1>
+          </h2>
         )}
         <fieldset>
           <legend>Dealer</legend>
@@ -261,11 +267,7 @@ export default class War extends Game {
           </div>
           {isWar && (
             <div>
-              <h1
-                style={{ color: "red", fontSize: "3rem", lineHeight: ".5rem" }}
-              >
-                IT'S WAR!!
-              </h1>
+              <h2 className={`war`}>IT'S WAR!!</h2>
               <Deck
                 model={{ cards: battles }}
                 imagePath={`/images/cards/standard`}

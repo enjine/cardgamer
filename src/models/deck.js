@@ -1,5 +1,6 @@
 import CONSTANTS from "../constants";
 import cardFactory from "../factories/card";
+import { fisherYatesShuffle } from "./../lib";
 
 export default function deck(type) {
   this.model = {
@@ -29,17 +30,12 @@ deck.prototype.size = function size() {
   return this.model.cards.length;
 };
 
-deck.prototype.take = function take(num) {
-  return this.model.cards.splice(0, num);
+deck.prototype.take = function take(num, from = 0) {
+  return this.model.cards.splice(from, num);
 };
 
-deck.prototype.shuffle = function shuffle() {
+deck.prototype.shuffle = function () {
   const { cards } = this.model;
-  let i = cards.length - 1;
-  for (i; i > 0; i--) {
-    const j = Math.floor(Math.random() * i);
-    const temp = cards[i];
-    cards[i] = cards[j];
-    cards[j] = temp;
-  }
+  fisherYatesShuffle(cards);
+  return this.model.cards;
 };

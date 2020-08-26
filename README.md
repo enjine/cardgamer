@@ -15,6 +15,22 @@ Have fun!
 
 ==================================================
 
+## BUGS
+
+- face-up/face-down implementation should be represented on the model, not in component state and results in misrepresentation of a cards orientation and having to force re-renders.
+
+## TODO
+
+- create components for the Dealer, the PlayArea, DiscardPile, etc.. and nest them as children of the Surface component, create styles for the Surface component that correspond to each game and can be applied dynamically as a className using the constructor name of the active Game
+- better visual design and gameplay animations
+- add background music and sound effects
+- add more unit tests
+- support any number of players and multiple decks
+- make it responsive
+- break up CSS files per component
+
+==================================================
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
