@@ -16,8 +16,8 @@ const Player = (props) => {
             <Deck
               model={handModel}
               imagePath={`/images/cards/standard`}
-              stacked={true}
-              isFaceDown={true}
+              stacked={isStacked}
+              isFaceDown={isFaceDown}
             />
           }
         </aside>

@@ -258,10 +258,9 @@ export default class War extends Game {
               players.map((p) => (
                 <Player
                   key={`player-${p.number}-${p.name}`}
-                  number={p.number}
-                  name={p.name}
-                  hand={p.hand}
-                  victories={p.victories}
+                  {...p}
+                  isStacked={true}
+                  isFaceDown={true}
                 />
               ))}
           </div>
